@@ -17,7 +17,7 @@ Objectives: Given a DAG, we focus on a critical but understudied aspect of optim
 
 Methods: We propose a novel algorithm called Dependent Cluster MAPping (DCMAP) which can, given an arbitrary, positive cost function, iteratively and rapidly find near-optimal, then optimal cluster mappings.
 
-Results: DCMAP is shown analytically to be optimal in terms of finding all of the least cost cluster mapping solutions and with no more iterations than an equally informed algorithm. Demonstrated on a complex systems seagrass DBN with 9.91 × 109 and 1.51 × 1021 possible cluster mappings for 25 and 50 node configurations, it took 856 and 1569 iterations on average to find the first optimal solution, respectively.
+Results: DCMAP is shown analytically to be optimal in terms of finding all of the least cost cluster mapping solutions and with no more iterations than an equally informed algorithm. Demonstrated on a complex systems seagrass DBN with 9.91 × 10^9 and 1.51 × 10^21 possible cluster mappings for 25 and 50 node configurations, it took 856 and 1569 iterations on average to find the first optimal solution, respectively.
 
 Conclusions: The effectiveness of DCMAP enables future research in BN learning using optimisation, such as through enhancing computational efficiency or minimising entropy for learning. This is critically important as computation of marginal distributions or updating model parameters is NP-hard.
 
