@@ -182,12 +182,6 @@ void dcmap::makesameclust() {
 				uvec dddd;
 				uword xpathlen = 0;							// current path length
 				while (inds.size() > 0) {
-					//if (i == 13) {
-					//	inds.print("inds: ");
-					//	pathlen.print("pathlen: ");
-					//	dddd = (pathlen(inds) < xpathlen);
-					//	dddd.print("dddd: ");
-					//}
 					inds = unique(mod(find((dag.cols(inds) >= 0)), numnodes));
 					xpathlen++;
 					for (auto jt = inds.begin(); jt != inds.end(); ++jt) {
@@ -199,20 +193,10 @@ void dcmap::makesameclust() {
 					//pardesc.at(i).shed_row(*it);
 					shedi = join_cols(shedi, uvec(1, fill::value(it-parinds.at(i).begin())));
 				}
-				//if (i == 13) {
-				//	//pathlen.print();
-				//	cout << "i " << i << " par " << *it << " pathlen " << pathlen(i) << endl;
-				//	pathlen.print("pathlen");
-				//	//cout << endl;
-				//}
 			}
 		} // end filter out pardesc.at(i)
 		parinds.at(i).shed_rows(shedi);
-		//if (i == 13) {
-		//	shedi.print("shedi ");
-		//	pardesc.at(i).print("pardesc");
-		//	parinds.at(i).print("parinds");
-		//}
+
 		urowvec x = sameclust.row(i);
 		x(pardesc.at(i)).fill(1);
 		x(parinds.at(i)).fill(1);
@@ -252,22 +236,7 @@ void dcmap::search(double seed) {
 	setspmscal(Uhat, leaves + linspace<uvec>(0, leaves.size() - 1, leaves.size()) * numnodes, uvec(1,fill::zeros), (uword)1);
 	for (uword i = 0; i < leaves.size(); i++) 										// add leaf nodes to Q
 		Qdash.addtoq(1, i+1, 0, Gmin, 0);
-	//Qdash.exportq("Qdash: ");
-	//Qdash.addtoq(1, 2, 1, Gmin, 5);
-	//Q.addtoq(3, 3, 1, Gmin, 6);
-	//Q.addtoq(2, 1, 1, Gmin, 0);
-	// br_lk(0, 6) = 1;
-	//br_pl(2) = 1;
-	//U(5, 2) = 1;
-	//U(6, 2) = 2;
-	//br_pl(1) = 1;
-	//U(5, 1) = 2;
-	//U(6, 1) = 2;
-	//Q.addtoq(1, 3, 1, Gmin, 5);
-	//Q.addtoq(4, 3, 1, Gmin, 5);
-	//br_pl(0) = 1;
-	//U(6, 0) = 2;
-	//U(5, 0) = 1;
+
 	iter = 1;
 	//uword prevpeek = 1;															// previous peek: 1 = popped Qdash or lowest layer entry, 0 = least cost entry
 	while (iter <= maxiter){														// main loop
@@ -348,37 +317,7 @@ void dcmap::search(double seed) {
 					}
 				} // end if copy branches
 
-				// ---------------- start 202409 -------------------------------------------------
-				//if (combos.size()>1 || (combos.size() == 1 && combos.begin()->size() != 0)) { // if combos non-empty, including 1 combo which is empty
-				//vec Gvec(combos.size(), fill::zeros);
-				//vec ghatvec(combos.size(), fill::value(arma::math::inf()));
-				//for (auto xind = combos.begin(); xind != combos.end(); ++xind) {	// foreach combo xind
-				//	// (*xind).print("xind: ");										// debugging
-				//	// ----- Compute G, ghat, update U and J
-				//	if ((*xind).size() > 0) {
-				//		uword bdash = bdashvec(xind - combos.begin());
-				//		//cout << "b: " << bdash << "brpl: " << br_pl(bdash-1) << endl;
-				//		uvec intlk(get_intlk(*xind, bdash, Qdash.k));				// get intlk mapping
-				//		vec Jdash(numnodes);										// Jdash for propchild and bwdselimcost to update J
-				//		// cost from propchild and bwdselimcost to update G(X_l)
-				//		double cost = propchild(*xind, dag, uvec(U.col(bdash - 1)), numnodes, cl_layer, numstates, J.col(bdash - 1), Jdash);
-				//		//cout << "propchild cost: " << cost << endl;
-				//		cost += bwdselimcost((*xind)(sort_index(cl_order(*xind))), dag, intlk, numstates, Jdash);
-				//		//cout << "bwdselim cost: " << cost << endl;
-				//		if (Qdash.l > 0 && G(Qdash.l, bdash - 1) == 0)				// if first cluster in layer; add previous layer G
-				//			Gvec(xind - combos.begin()) = G(Qdash.l - 1, bdash - 1); //G(Qdash.l, bdash - 1) = G(Qdash.l - 1, bdash - 1);
-				//		Gvec(xind - combos.begin()) += G(Qdash.l, bdash - 1) + cost; //G(Qdash.l, bdash - 1) += cost;								// add clust-layer cost
-				//		uword indsj = Qdash.l * numnodes * numnodes + (Qdash.k - 1) * numnodes;
-				//		uvec Uzeros(U.col(bdash - 1));
-				//		Uzeros.rows(*xind).fill(Qdash.k);
-				//		sp_mat Jvec(J.col(bdash - 1));
-				//		setspmvec(Jvec, linspace<uvec>(indsj, indsj + numnodes - 1, numnodes), 0, Jdash);// set J
-				//		// heuristic on U(,branch)==0; convert to full vector
-				//		ghatvec(xind - combos.begin()) = heuristic(find(Uzeros == (uword)0), dag, Uzeros, numnodes,
-				//			cl_layer, cl_order, numstates, Jvec.col(0)) + G(Qdash.l, bdash - 1);// get heuristic cost#pragma once
-				//	}
-				//}
-				//uvec indghat(sort_index(ghatvec));									// sorted indices
+
 				uvec indghat(linspace<uvec>(0, combos.size()-1, combos.size()));
 				//uword first = 1;
 				//cout << "Iter " << iter << " -------------------------------------- " << endl;
@@ -505,91 +444,16 @@ void dcmap::search(double seed) {
 			break;
 		} // end if
 		iter++;
-		//Q.exportq("-Q: ");
-		//Qdash.exportq("-Qdash: ");
-		//if (iter == 41 || iter == 42 || iter == 47) {
-		//	Qdash.exportq("Qdash: ");
-		//	Q.exportq("Q: ");
-		//}
-		//(Uhat.col(20)).print("Uhat: ");
-		//Uhat.print("Uhat: ");
+
 	} // end while
 	
 	cout << endl << endl << "____________________________________________________" << endl;
-	//Qdash.exportq("Qdash: ");
-	//Q.exportq("Q: ");
-	//Uhat.print("Uhat: ");
-	//U.print("U: ");
-	//G.print("G: ");
-	//J.print("J: ");
-	//br_pl.print("br_pl: ");
-	//br_lk.print("br_lk: ");
+
 	debugdat = debugdat.t();
 	debugdat = debugdat.rows(0, debugi - 1);
-	//debugdat.raw_print("debugdat: ");
-	//cout << Q.Ncs << ": " << max(Q.qinds.col(0)) << ", " << max(Qdash.qinds.col(0)) << endl;
-	//cout << "Q qind: " << Q.qind << " Qdash qind: " << Qdash.qind << " Q maxsize " << Np*10 << endl;
-	//cout << "Ncs " << Ncs << endl;
-	//((debugdat.rows(0, 14))).print("debugdat: ");
-	//((debugdat.rows(0, debugi - 1))).print("debugdat: ");
-	//((debugdat.cols(0,debugi-1))).print("debugdat: ");
-	//sameclust.print("sameclust: ");
+
 }
 
 
 
 
-//// ----- makesameclust
-//// Creates sameclust matrix give numnodes and dag matrix
-//// col=x, row=nodes that can be in same clust as x, 1=yes/0=no
-//// row: given a node, what other nodes are connected by a parind
-//// col: when proposing clusts for parind, which nodes to propose similar clusts to
-//void dcmap::makesameclust() {
-//	sameclust = umat(numnodes, numnodes);
-//	vector<uvec> parinds;									// indices to parent nodes foreach node
-//	vector<uvec> pardesc(numnodes);							// parind + descendants down to leaf nodes
-//
-//	for (uword i = 0; i < numnodes; i++) {
-//		parinds.push_back(unique(mod(find((dag.row(i) >= 0).t()), numnodes)));
-//		// parinds.at(i).print("- ");
-//	}
-//	for (uword i = 0; i < numnodes; i++) {					// get all descendants of parinds of x and filter by layer >=x
-//		uvec inds = parinds.at(i);							// start at parent inds
-//		while (inds.size() > 0) {
-//			pardesc.at(i) = join_cols(pardesc.at(i), inds);	// add to pardesc
-//			inds = unique(mod(find((dag.cols(inds) >= 0)), numnodes));	// get children 
-//			inds = inds(find(cl_layer(inds) >= cl_layer(i)));//filter by layer >=x
-//		} // end while
-//		/*pardesc.at(i).print("pardesc ");
-//		cout << endl;*/
-//		uvec shedi;
-//		for (auto it = pardesc.at(i).begin(); it != pardesc.at(i).end(); ++it) {
-//			//cout << "it " << *it << endl;
-//			if (cl_layer((*it)) - cl_layer(i) > 1) {		// l(pardesc) > l(i) + 1; check no path with length > 2
-//				inds = uvec(1, fill::value(*it));
-//				uvec pathlen(numnodes, fill::zeros);
-//				uword xpathlen = 0;							// current path length
-//				while (inds.size() > 0) {
-//					inds = unique(mod(find((dag.cols(inds) >= 0)), numnodes));
-//					xpathlen++;
-//					pathlen(find(pathlen(inds) < xpathlen)).fill(xpathlen); // don't touch longer lengths, update <xpathlen values
-//					//pathlen(inds) += 1;
-//				} // end while
-//				if (pathlen(i) > 1) {						// if path length at node i > 1, orignating from *it=pardesc.at(i), rm it
-//					//pardesc.at(i).shed_row(*it);
-//					shedi = join_cols(shedi, uvec(1, fill::value(*it)));
-//				}
-//				/*pathlen.print();
-//				cout << "i " << i << "pathlen " << pathlen(i) << endl;
-//				pardesc.at(i).print();
-//				cout << endl;*/
-//			}
-//		} // end filter out pardesc.at(i)
-//		//shedi.print("shedi ");
-//		pardesc.at(i).shed_rows(shedi);
-//		urowvec x = sameclust.row(i);
-//		x(pardesc.at(i)).fill(1);
-//		sameclust.row(i) = x;
-//	} // end for
-//	//sameclust.print("sameclust ");
-//}
